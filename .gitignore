@@ -1,0 +1,4 @@
+*.sublime-workspace
+temp 
+*.pdf
+__pycache__
