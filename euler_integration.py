@@ -16,6 +16,7 @@ def euler_method(x0, y0, z0, vx0, vy0, vz0, dt, n_steps):
     Retourne :
         sim_x, sim_y, sim_z (np.ndarray) : Tableaux contenant la trajectoire simulée.
     """
+    print("Simulation à partir de la méthode d'Euler...")
     # Initialisation des tableaux de position
     sim_x = np.zeros(n_steps)
     sim_y = np.zeros(n_steps)
@@ -38,6 +39,8 @@ start_date = '2010-01-01'
 end_date = '2025-02-13'
 # pas de temps en nombre de jours
 dt = 1
+# si True affiche les résultats, si False ne les affiche pas
+do_plot = True
 
 # Dans cette fonction on initialise les paramètres ne vous en occupez pas!
 x, y, z, vx, vy, vz = horizons_jupiter.init(dt, start_date, end_date)
@@ -47,4 +50,4 @@ sim_x, sim_y, sim_z = euler_method(x[0], y[0], z[0], vx[0], vy[0], vz[0], dt,
                                    len(x))
 
 horizons_jupiter.plot_results(x, y, z, sim_x, sim_y, sim_z, start_date,
-                              end_date)
+                              end_date, do_plot)

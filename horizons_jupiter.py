@@ -5,11 +5,10 @@ import numpy as np
 
 
 def compute_error(sim_x, sim_y, sim_z, ref_x, ref_y, ref_z):
-    sim_positions = np.vstack((sim_x, sim_y, sim_z)).T
-    ref_positions = np.vstack((ref_x, ref_y, ref_z)).T
+    # Calcul direct des distances sans empiler les positions
+    distances_sim = np.sqrt(sim_x**2 + sim_y**2 + sim_z**2)
+    distances_ref = np.sqrt(ref_x**2 + ref_y**2 + ref_z**2)
 
-    distances_sim = np.linalg.norm(sim_positions, axis=1)
-    distances_ref = np.linalg.norm(ref_positions, axis=1)
     # En pourcentage
     error = np.abs((distances_sim - distances_ref) / distances_ref) * 100
     # Retourne l'erreur moyenne et le tableau d'erreurs
@@ -17,7 +16,7 @@ def compute_error(sim_x, sim_y, sim_z, ref_x, ref_y, ref_z):
 
 
 def init(dt, start_date, end_date):
-
+    print("Initialisation des paramètres...")
     step_size = f'{dt}d'  # Pas de temps d'un jour
 
     # Création d'un objet Horizons pour Jupiter
@@ -33,61 +32,66 @@ def init(dt, start_date, end_date):
     vec = obj.vectors()
 
     # Extraction des coordonnées héliocentriques (en UA)
-    x = np.array(vec['x'], dtype=float)
-    y = np.array(vec['y'], dtype=float)
-    z = np.array(vec['z'], dtype=float)
+    x, y, z = np.array(vec['x'], dtype=float), np.array(
+        vec['y'], dtype=float), np.array(vec['z'], dtype=float)
+    vx, vy, vz = np.array(vec['vx'], dtype=float), np.array(
+        vec['vy'], dtype=float), np.array(vec['vz'], dtype=float)
 
-    # Extraction des vitesses héliocentriques (en UA/jour)
-    vx = np.array(vec['vx'], dtype=float)
-    vy = np.array(vec['vy'], dtype=float)
-    vz = np.array(vec['vz'], dtype=float)
-
-    # Extraction des dates pour l'affichage
-    dates = Time(vec['datetime_jd'], format='jd').iso
+    # Retourner directement les tableaux nécessaires sans autres manipulations
     return x, y, z, vx, vy, vz
 
 
-def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date):
-    # Calcul de l'erreur moyenne
+def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date, do_plot):
+    print("Affichage des résultats...")
+
+    # Calcul de l'erreur moyenne, mais ne le faire que si nécessaire
     erreur_moyenne, erreurs = compute_error(sim_x, sim_y, sim_z, x, y, z)
 
-    # Affichage des trajectoires
-    fig = plt.figure(figsize=(10, 6))
-    ax = fig.add_subplot(111, projection='3d')
+    if do_plot:
+        # Affichage des trajectoires
+        fig = plt.figure(figsize=(10, 6))
+        ax = fig.add_subplot(111, projection='3d')
 
-    # Trajectoire fournie par Horizons
-    ax.plot(x,
-            y,
-            z,
-            marker='o',
-            linestyle='-',
-            label='Jupiter Trajectory (Horizons)')
+        nbr_simply = 50  # Réduction de la fréquence d'échantillonnage pour alléger les graphiques
+        # Trajectoire fournie par Horizons
+        ax.plot(x[::nbr_simply],
+                y[::nbr_simply],
+                z[::nbr_simply],
+                marker='o',
+                linestyle='-',
+                label='Jupiter Trajectory (Horizons)',
+                rasterized=True)
 
-    # Trajectoire simulée avec Euler
-    ax.plot(sim_x,
-            sim_y,
-            sim_z,
-            marker='.',
-            linestyle='--',
-            color='green',
-            label='Simulated Trajectory (Euler)')
+        # Trajectoire simulée avec Euler
+        ax.plot(sim_x[::nbr_simply],
+                sim_y[::nbr_simply],
+                sim_z[::nbr_simply],
+                marker='.',
+                linestyle='--',
+                color='green',
+                label='Simulated Trajectory (Euler)',
+                rasterized=True)
 
-    # Ajout d'un point pour représenter le Soleil (position (0,0,0))
-    ax.scatter(0, 0, 0, color='orange', marker='*', s=200, label='Soleil')
+        # Ajout d'un point pour représenter le Soleil (position (0,0,0))
+        ax.scatter(0,
+                   0,
+                   0,
+                   color='orange',
+                   marker='*',
+                   s=200,
+                   label='Soleil',
+                   rasterized=True)
 
-    # Légendes et étiquettes
-    ax.set_xlabel('X (UA)')
-    ax.set_ylabel('Y (UA)')
-    ax.set_zlabel('Z (UA)')
-    ax.set_title(
-        f'Trajectoire Héliocentrique de Jupiter ({start_date} - {end_date})')
+        # Légendes et étiquettes
+        ax.set_xlabel('X (UA)')
+        ax.set_ylabel('Y (UA)')
+        ax.set_zlabel('Z (UA)')
+        ax.set_title(
+            f'Trajectoire Héliocentrique de Jupiter ({start_date} - {end_date})'
+        )
 
-    # Ajout des annotations aux points de départ et de fin
-    # ax.text(x[0], y[0], z[0], dates[0], color='red')
-    # ax.text(x[-1], y[-1], z[-1], dates[-1], color='blue')
-
-    plt.legend()
-    plt.show()
+        plt.legend()
+        plt.show()
 
     # Affichage de l'erreur moyenne
     print(
