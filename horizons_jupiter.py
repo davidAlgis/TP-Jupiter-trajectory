@@ -44,11 +44,7 @@ def init(dt, start_date, end_date):
 
     # Extraction des dates pour l'affichage
     dates = Time(vec['datetime_jd'], format='jd').iso
-
-    # Paramètres physiques
-    # [UA^3/jour^2] paramètre gravitationnel du Soleil
-    mu = 0.00029591220828559104
-    return mu, x, y, z, vx, vy, vz
+    return x, y, z, vx, vy, vz
 
 
 def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date):

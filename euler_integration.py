@@ -2,7 +2,7 @@ import numpy as np
 import horizons_jupiter
 
 
-def euler_method(x0, y0, z0, vx0, vy0, vz0, mu, dt, n_steps):
+def euler_method(x0, y0, z0, vx0, vy0, vz0, dt, n_steps):
     """
     Simule la trajectoire de Jupiter autour du Soleil en utilisant la méthode d'Euler.
 
@@ -40,11 +40,11 @@ end_date = '2025-02-13'
 dt = 1
 
 # Dans cette fonction on initialise les paramètres ne vous en occupez pas!
-mu, x, y, z, vx, vy, vz = horizons_jupiter.init(dt, start_date, end_date)
+x, y, z, vx, vy, vz = horizons_jupiter.init(dt, start_date, end_date)
 
 # Dans cette fonction on initialise les paramètres ne vous en occupez pas!
-sim_x, sim_y, sim_z = euler_method(x[0], y[0], z[0], vx[0], vy[0], vz[0], mu,
-                                   dt, len(x))
+sim_x, sim_y, sim_z = euler_method(x[0], y[0], z[0], vx[0], vy[0], vz[0], dt,
+                                   len(x))
 
 horizons_jupiter.plot_results(x, y, z, sim_x, sim_y, sim_z, start_date,
                               end_date)
