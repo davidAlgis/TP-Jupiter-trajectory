@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"build_systems": [
+		{
+			"name": "Launch TP2",
+			"linux": {
+				"shell_cmd": "python3 \"${project_path:${folder}}/euler_integration.py\""
+			},
+			"osx": {
+				"shell_cmd": "python3 \"${project_path:${folder}}/euler_integration.py\""
+			},
+			"windows": {
+				"shell_cmd": "python \"${project_path:${folder}}/euler_integration.py\""
+			},
+			"working_dir": "${project_path:${folder}}",
+		},
+	]
+}
