@@ -16,10 +16,10 @@ def compute_error(sim_x, sim_y, sim_z, ref_x, ref_y, ref_z):
 
 
 def init(dt, start_date, end_date):
-    print("Initialisation des paramètres...")
+    print("Initialisation des parametres...")
     step_size = f'{dt}d'  # Pas de temps d'un jour
 
-    # Création d'un objet Horizons pour Jupiter
+    # Creation d'un objet Horizons pour Jupiter
     obj = Horizons(id='599',
                    location='@sun',
                    epochs={
@@ -28,23 +28,23 @@ def init(dt, start_date, end_date):
                        'step': step_size
                    })
 
-    # Récupération des vecteurs de position et de vitesse
+    # Recuperation des vecteurs de position et de vitesse
     vec = obj.vectors()
 
-    # Extraction des coordonnées héliocentriques (en UA)
+    # Extraction des coordonnees heliocentriques (en UA)
     x, y, z = np.array(vec['x'], dtype=float), np.array(
         vec['y'], dtype=float), np.array(vec['z'], dtype=float)
     vx, vy, vz = np.array(vec['vx'], dtype=float), np.array(
         vec['vy'], dtype=float), np.array(vec['vz'], dtype=float)
 
-    # Retourner directement les tableaux nécessaires sans autres manipulations
+    # Retourner directement les tableaux necessaires sans autres manipulations
     return x, y, z, vx, vy, vz
 
 
 def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date, do_plot):
-    print("Affichage des résultats...")
+    print("Affichage des resultats...")
 
-    # Calcul de l'erreur moyenne, mais ne le faire que si nécessaire
+    # Calcul de l'erreur moyenne, mais ne le faire que si necessaire
     erreur_moyenne, erreurs = compute_error(sim_x, sim_y, sim_z, x, y, z)
 
     if do_plot:
@@ -52,7 +52,7 @@ def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date, do_plot):
         fig = plt.figure(figsize=(10, 6))
         ax = fig.add_subplot(111, projection='3d')
 
-        nbr_simply = 50  # Réduction de la fréquence d'échantillonnage pour alléger les graphiques
+        nbr_simply = 50  # Reduction de la frequence d'echantillonnage pour alleger les graphiques
         # Trajectoire fournie par Horizons
         ax.plot(x[::nbr_simply],
                 y[::nbr_simply],
@@ -62,7 +62,7 @@ def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date, do_plot):
                 label='Jupiter Trajectory (Horizons)',
                 rasterized=True)
 
-        # Trajectoire simulée avec Euler
+        # Trajectoire simulee avec Euler
         ax.plot(sim_x[::nbr_simply],
                 sim_y[::nbr_simply],
                 sim_z[::nbr_simply],
@@ -72,7 +72,7 @@ def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date, do_plot):
                 label='Simulated Trajectory (Euler)',
                 rasterized=True)
 
-        # Ajout d'un point pour représenter le Soleil (position (0,0,0))
+        # Ajout d'un point pour representer le Soleil (position (0,0,0))
         ax.scatter(0,
                    0,
                    0,
@@ -82,12 +82,12 @@ def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date, do_plot):
                    label='Soleil',
                    rasterized=True)
 
-        # Légendes et étiquettes
+        # Legendes et etiquettes
         ax.set_xlabel('X (UA)')
         ax.set_ylabel('Y (UA)')
         ax.set_zlabel('Z (UA)')
         ax.set_title(
-            f'Trajectoire Héliocentrique de Jupiter ({start_date} - {end_date})'
+            f'Trajectoire Heliocentrique de Jupiter ({start_date} - {end_date})'
         )
 
         plt.legend()
@@ -95,10 +95,10 @@ def plot_results(x, y, z, sim_x, sim_y, sim_z, start_date, end_date, do_plot):
 
     # Affichage de l'erreur moyenne
     print(
-        f"Erreur relative moyenne de la simulation Euler par rapport aux données Horizons : {erreur_moyenne:.4f} %"
+        f"Erreur relative moyenne de la simulation Euler par rapport aux donnees Horizons : {erreur_moyenne:.4f} %"
     )
     if erreur_moyenne < 5:
         print(
-            "Vous avez réussi l'erreur moyenne est inférieure à 5% ! Bravo 🎉")
+            "Vous avez reussi l'erreur moyenne est inferieure à 5% ! Bravo 🎉")
 
     return erreur_moyenne
